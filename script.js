@@ -74,10 +74,10 @@ document.addEventListener('DOMContentLoaded', () => {
         appearOnScroll.observe(fader);
     });
 
-    // 4. Form Submission handling (Prevent Default)
+    // 4. Form Submission handling with EmailJS
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
-        contactForm.addEventListener('submit', (e) => {
+        contactForm.addEventListener('submit', function (e) {
             e.preventDefault();
             const btn = contactForm.querySelector('button[type="submit"]');
             const originalText = btn.textContent;
@@ -85,20 +85,33 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.textContent = 'Илгээж байна...';
             btn.style.opacity = '0.7';
 
-            // Simulate sending delay
-            setTimeout(() => {
-                btn.textContent = 'Зурвас амжилттай илгээгдлээ!';
-                btn.style.backgroundColor = '#28a745';
-                btn.style.color = '#fff';
-                btn.style.opacity = '1';
-                contactForm.reset();
+            // EmailJS sendForm (SERVICE_ID, TEMPLATE_ID, HTML_FORM)
+            emailjs.sendForm('service_aeok7og', 'template_ga5y1qt', this)
+                .then(function () {
+                    btn.textContent = 'Зурвас амжилттай илгээгдлээ!';
+                    btn.style.backgroundColor = '#28a745';
+                    btn.style.color = '#fff';
+                    btn.style.opacity = '1';
+                    contactForm.reset();
 
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                    btn.style.backgroundColor = '';
-                    btn.style.color = '';
-                }, 3000);
-            }, 1500);
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.backgroundColor = '';
+                        btn.style.color = '';
+                    }, 3000);
+                }, function (error) {
+                    console.log('FAILED...', error);
+                    btn.textContent = 'Алдаа гарлаа. Дахин оролдоно уу.';
+                    btn.style.backgroundColor = '#dc3545';
+                    btn.style.color = '#fff';
+                    btn.style.opacity = '1';
+
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.backgroundColor = '';
+                        btn.style.color = '';
+                    }, 3000);
+                });
         });
     }
 });
